@@ -1,18 +1,8 @@
 'use strict';
 
-const apiKey = "833ea1b9d7mshbef97797dff363dp1d9ac4jsna2801a24e32d";
+const searchURL = 'https://api.github.com/users/repos';
 
-const searchURL = 'https://api.github.com/search/topics?q=NodeJS';
-
-
-function formatQueryParams(params) {
-  const queryItems = Object.keys(params)
-    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-  return queryItems.join('&');
-}
-
-function displayResults(responseJson, maxResults) {
-  // if there are previous results, remove them
+function displayResults(responseJson) {
   console.log(responseJson);
   $('#results-list').empty();
   // iterate through the articles array, stopping at the max number of results
@@ -31,19 +21,21 @@ function displayResults(responseJson, maxResults) {
   $('#results').removeClass('hidden');
 };
 
-function getNews(query, maxResults=10) {
+function getNews(query) {
   const params = {
     q: query,
     pageSize: maxResults
   };
-  const queryString = formatQueryParams(params)
-  const url = searchURL + '?' + queryString;
+  const queryString = formatQueryParams(params);
+  const url = `${searchURL}/${queryString}`;
 
   console.log(url);
 
   const options = {
     headers: new Headers({
-      "x-rapidapi-key": apiKey})
+      'content-type': 'application/json',
+      'accept': 'application/vnd.github.nebula-preview+json'
+    })
   };
 
   fetch(url, options)
